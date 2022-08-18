@@ -194,7 +194,7 @@ class Sync(Base):
 
             # ensure all base tables have at least one primary_key
             for table in node.base_tables:
-                model: sa.sql.Alias = self.model(table, node.schema)
+                model: sa.sql.Alias = self.models(table, node.schema)
                 if not model.primary_keys:
                     raise PrimaryKeyNotFoundError(
                         f"No primary key(s) for base table: {table}"
@@ -1148,7 +1148,7 @@ class Sync(Base):
     def _refresh_views(self) -> None:
         for node in self.root.traverse_breadth_first():
             if node.table in self.views(node.schema):
-                if node.table in self.materialized_views(node.schema):
+                if node.table in self._materialized_views(node.schema):
                     self.refresh_view(node.table, node.schema)
 
     def on_publish(self, payloads: list) -> None:
